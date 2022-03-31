@@ -75,7 +75,7 @@ TEST(Parallel_Operations_MPI, Equal_Strings) {
   }
 }
 
-TEST(Parallel_Operations_MPI, Equal_Strings) {
+TEST(Parallel_Operations_MPI, Empty_Strings) {
   int rank;
   MPI_Comm_rank(MPI_COMM_WORLD, &rank);
   std::string str1, str2;
