@@ -21,7 +21,7 @@ TEST(Parallel_Operations_MPI, Parallel_Equal_Size) {
   int rank;
   MPI_Comm_rank(MPI_COMM_WORLD, &rank);
   std::string str1, str2;
-  const int size = 80;
+  const int size = 200;
 
   if (rank == 0) {
     str1 = getRandomString(size);
@@ -40,7 +40,7 @@ TEST(Parallel_Operations_MPI, Parallel_Different_Size) {
   int rank;
   MPI_Comm_rank(MPI_COMM_WORLD, &rank);
   std::string str1, str2;
-  const int size = 80;
+  const int size = 200;
 
   if (rank == 0) {
     str1 = getRandomString(size);
@@ -59,7 +59,7 @@ TEST(Parallel_Operations_MPI, Equal_Strings) {
   int rank;
   MPI_Comm_rank(MPI_COMM_WORLD, &rank);
   std::string str1, str2;
-  const int size = 80;
+  const int size = 200;
 
   if (rank == 0) {
     str1 = getRandomString(size);

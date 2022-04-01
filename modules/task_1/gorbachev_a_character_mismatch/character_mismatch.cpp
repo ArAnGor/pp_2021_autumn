@@ -9,7 +9,7 @@ std::string getRandomString(int size) {
   std::mt19937 gen(dev());
   std::string s;
   for (int i = 0; i < size; i++)
-    s += 32 + gen() % (128 - 32);
+    s += 97 + gen() % (122 - 97);
   return s;
 }
 
@@ -19,7 +19,7 @@ int parallelCountMismatch(std::string str1, std::string str2) {
     str1 = str2;
     str2 = buf;
   }
-
+  
   int res, procRank, procNum;
   const int length = str1.length();
   int portion, remains;
@@ -29,15 +29,18 @@ int parallelCountMismatch(std::string str1, std::string str2) {
   MPI_Comm_rank(MPI_COMM_WORLD, &procRank);
 
   if (procRank == 0) {
-    if (procNum > length)
-      procNum = length;
+    if (procNum > length && length != 0)
+      throw(-1);
     if (procNum == 1)
       remains = length;
     else {
       portion = length / (procNum - 1);
       remains = length % (procNum - 1);
-      for (int i = 1; i < procNum; i++)
+      for (int i = 1; i < procNum; i++) {
         MPI_Send(&portion, 1, MPI_INT, i, 0, MPI_COMM_WORLD);
+        MPI_Send(&str1[portion*(i-1)], portion, MPI_CHAR, i, 1, MPI_COMM_WORLD);
+        MPI_Send(&str2[portion*(i-1)], portion, MPI_CHAR, i, 2, MPI_COMM_WORLD);
+      }
     }
     for (int i = length - remains; i < length; i++)
       if (str1[i] != str2[i])
@@ -46,9 +49,14 @@ int parallelCountMismatch(std::string str1, std::string str2) {
 
   else {
     MPI_Status status;
-    MPI_Recv(&portion, 1, MPI_INT, 0, MPI_ANY_TAG, MPI_COMM_WORLD, &status);
-    for (int i = portion * (procRank - 1); i < portion * procRank; i++)
-      if (str1[i] != str2[i])
+    MPI_Recv(&portion, 1, MPI_INT, 0, 0, MPI_COMM_WORLD, &status);
+    std::vector<char> buf1(portion), buf2(portion);
+
+    MPI_Recv(buf1.data(), portion, MPI_CHAR, 0, 1, MPI_COMM_WORLD, &status);
+    MPI_Recv(buf2.data(), portion, MPI_CHAR, 0, 2, MPI_COMM_WORLD, &status);
+
+    for (int i = 0; i < portion; i++)
+      if (buf1[i] != buf2[i])
         tmpRes++;
   }
 
