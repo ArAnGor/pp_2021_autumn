@@ -15,33 +15,111 @@ TEST(Parallel_Operations_MPI, Sequential_Square) {
     { 3, 2 },
     { 7, 6 }
   };
-  Matrix M = sequentialMultiplication(A, B, 2, 2, 2);
-  //printf("%d %d\n%d %d\n", M[0][0], M[0][1], M[1][0], M[1][1]);
+  Matrix M = sequentialMultiplication(A, B);
   ASSERT_EQ(M, C);
 }
 
 TEST(Parallel_Operations_MPI, Sequential_Rectangle) {
   Matrix A = {
     { 1, 2, 3 },
-    { 4, 0, 5 },
-    { 6, 7, 8 }
+    { 4, 0, 5 }
   };
+  Matrix B = {
+    { 1, 2 },
+    { 3, 4 },
+    { 1, 0 }
+  };
+  Matrix C = {
+    { 10, 10 },
+    {  9,  8 }
+  };
+  Matrix M = sequentialMultiplication(A, B);
+  //printf("%d %d\n%d %d\n", M[0][0], M[0][1], M[1][0], M[1][1]);
+  ASSERT_EQ(M, C);
 }
 
 TEST(Parallel_Operations_MPI, Parallel_Square) {
+  int rank;
+  MPI_Comm_size(MPI_COMM_WORLD, &rank);
+  Matrix A, B, C;
+  const int size = 3;
 
+  if (rank == 0) {
+    A = getRandomMatrix(size, size);
+    B = getRandomMatrix(size, size);
+  }
+
+  C = parallelMultiplication(A, B);
+
+  if (rank == 0) {
+    Matrix M = sequentialMultiplication(A, B);
+    ASSERT_EQ(M, C);
+  }
 }
 
 TEST(Parallel_Operations_MPI, Parallel_Rectangle) {
+  int rank;
+  MPI_Comm_size(MPI_COMM_WORLD, &rank);
+  Matrix A, B, C;
+  const int m = 2, n = 3, k = 2;
 
+  if (rank == 0) {
+    A = getRandomMatrix(m, n);
+    B = getRandomMatrix(n, k);
+  }
+
+  C = parallelMultiplication(A, B);
+
+  if (rank == 0) {
+    Matrix M = sequentialMultiplication(A, B);
+    ASSERT_EQ(M, C);
+  }
 }
 
 TEST(Parallel_Operations_MPI, Identity_Matrix) {
+  int rank;
+  MPI_Comm_size(MPI_COMM_WORLD, &rank);
+  Matrix A, B, C;
+  const int size = 3;
 
+  if (rank == 0) {
+    A = getRandomMatrix(size, size);
+    B = Matrix(size);
+    for (int i = 0; i < size; i++)
+      for (int j = 0; j < size; j++)
+        B[i].push_back(i == j ? 1 : 0);
+  }
+
+  C = parallelMultiplication(A, B);
+
+  if (rank == 0) {
+    Matrix M = sequentialMultiplication(A, B);
+    ASSERT_EQ(M, A);
+    ASSERT_EQ(M, C);
+  }
 }
 
 TEST(Parallel_Operations_MPI, Zero_Matrix) {
+  int rank;
+  MPI_Comm_size(MPI_COMM_WORLD, &rank);
+  Matrix A, B, C;
+  const int size = 3;
 
+  if (rank == 0) {
+    A = getRandomMatrix(size, size);
+    B = Matrix(size);
+    for (int i = 0; i < size; i++)
+      for (int j = 0; j < size; j++)
+        B[i].push_back(0);
+  }
+
+  C = parallelMultiplication(A, B);
+
+  if (rank == 0) {
+    Matrix M = sequentialMultiplication(A, B);
+    ASSERT_EQ(M, B);
+    ASSERT_EQ(M, C);
+  }
 }
 
 int main(int argc, char** argv) {
