@@ -3,15 +3,10 @@
 #define MODULES_TASK_2_GORBACHEV_A_RIBBON_VERTICAL_RIBBON_VERTICAL_H_
 
 #include <vector>
+#define Matrix std::vector<std::vector<int>>
 
-std::vector<std::vector<int>>& getRandomMatrix(int m, int n);
-std::vector<std::vector<int>>& sequentialMultiplication(
-  const std::vector<std::vector<int>>& A,
-  const std::vector<std::vector<int>>& B,
-  int m, int n, int k);
-std::vector<std::vector<int>>& parallelMultiplication(
-  const std::vector<std::vector<int>>& A,
-  const std::vector<std::vector<int>>& B,
-  int m, int n, int k);
+Matrix& getRandomMatrix(int m, int n);
+Matrix& sequentialMultiplication(const Matrix& A, const Matrix& B, int m, int n, int k);
+Matrix& parallelMultiplication(const Matrix& A, const Matrix& B, int m, int n, int k);
 
 #endif  // MODULES_TASK_2_GORBACHEV_A_RIBBON_VERTICAL_RIBBON_VERTICAL_H_
