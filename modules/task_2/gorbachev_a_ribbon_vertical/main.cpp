@@ -1,3 +1,4 @@
+// Copyright 2022 Gorbachev Artem
 #include <gtest/gtest.h>
 #include "ribbon_vertical.h"
 #include <gtest-mpi-listener.hpp>
@@ -34,15 +35,14 @@ TEST(Parallel_Operations_MPI, Sequential_Rectangle) {
     {  9,  8 }
   };
   Matrix M = sequentialMultiplication(A, B);
-  //printf("%d %d\n%d %d\n", M[0][0], M[0][1], M[1][0], M[1][1]);
   ASSERT_EQ(M, C);
 }
 
 TEST(Parallel_Operations_MPI, Parallel_Square) {
   int rank;
-  MPI_Comm_size(MPI_COMM_WORLD, &rank);
+  MPI_Comm_rank(MPI_COMM_WORLD, &rank);
   Matrix A, B, C;
-  const int size = 3;
+  const int size = 200;
 
   if (rank == 0) {
     A = getRandomMatrix(size, size);
@@ -59,9 +59,9 @@ TEST(Parallel_Operations_MPI, Parallel_Square) {
 
 TEST(Parallel_Operations_MPI, Parallel_Rectangle) {
   int rank;
-  MPI_Comm_size(MPI_COMM_WORLD, &rank);
+  MPI_Comm_rank(MPI_COMM_WORLD, &rank);
   Matrix A, B, C;
-  const int m = 2, n = 3, k = 2;
+  const int m = 200, n = 300, k = 200;
 
   if (rank == 0) {
     A = getRandomMatrix(m, n);
@@ -78,9 +78,9 @@ TEST(Parallel_Operations_MPI, Parallel_Rectangle) {
 
 TEST(Parallel_Operations_MPI, Identity_Matrix) {
   int rank;
-  MPI_Comm_size(MPI_COMM_WORLD, &rank);
+  MPI_Comm_rank(MPI_COMM_WORLD, &rank);
   Matrix A, B, C;
-  const int size = 3;
+  const int size = 300;
 
   if (rank == 0) {
     A = getRandomMatrix(size, size);
@@ -101,16 +101,13 @@ TEST(Parallel_Operations_MPI, Identity_Matrix) {
 
 TEST(Parallel_Operations_MPI, Zero_Matrix) {
   int rank;
-  MPI_Comm_size(MPI_COMM_WORLD, &rank);
+  MPI_Comm_rank(MPI_COMM_WORLD, &rank);
   Matrix A, B, C;
-  const int size = 3;
+  const int size = 300;
 
   if (rank == 0) {
     A = getRandomMatrix(size, size);
-    B = Matrix(size);
-    for (int i = 0; i < size; i++)
-      for (int j = 0; j < size; j++)
-        B[i].push_back(0);
+    B = getZeroMatrix(size, size);
   }
 
   C = parallelMultiplication(A, B);

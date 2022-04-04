@@ -5,6 +5,7 @@
 #include <vector>
 #define Matrix std::vector<std::vector<int>>
 
+Matrix& getZeroMatrix(int m, int n);
 Matrix& getRandomMatrix(int m, int n);
 Matrix& sequentialMultiplication(const Matrix& A, const Matrix& B);
 Matrix& parallelMultiplication(const Matrix& A, const Matrix& B);
