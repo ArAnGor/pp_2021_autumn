@@ -69,7 +69,7 @@ int sequentialMarking(int* image, int x, int y)
               eqv.push_back({ top, left });
 
             // check relation with other equivalences
-            for (int t = 0; t < eqv.size() - 1; j++) {
+            for (int t = 0; t < eqv.size() - 1; t++) {
               if (eqv[t].from == eqv[eqv.size() - 1].from) {
 
                 // there is a duplicate
@@ -112,6 +112,7 @@ int sequentialMarking(int* image, int x, int y)
         break;
       }
 
+  count -= eqv.size();
   return count;
 }
 
