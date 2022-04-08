@@ -53,7 +53,7 @@ TEST(Parallel_Operations_MPI, Parallel_Random) {
     int exp = sequentialMarking(sImage, x, y);
     for (int i = 0; i < y; i++) {
       for (int j = 0; j < x; j++)
-        printf("%d ", pImage[i * x + j]);
+        printf("%3d", pImage[i * x + j]);
       printf("\n");
     }
     ASSERT_EQ(res, exp);
