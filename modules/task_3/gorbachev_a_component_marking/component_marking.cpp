@@ -14,6 +14,25 @@ int* getRandomBinary(int x, int y)
   return image;
 }
 
+void closeGaps(int* image, int size)
+{
+  std::vector<int> rename;
+  for (int i = 0; i < size; i++)
+    if (image[i]) {
+      bool attend = false;
+      for (int j = 0; j < rename.size(); j++)
+        if (image[i] == rename[j]) {
+          attend = true;
+          image[i] = j + 1;
+          break;
+        }
+      if (!attend) {
+        rename.push_back(image[i]);
+        image[i] = rename.size();
+      }
+    }
+}
+
 void addToTable(std::vector<Equivalence>& eqv, int a, int b)
 {
   if (a < b)
@@ -112,6 +131,8 @@ int sequentialMarking(int* image, int x, int y)
         break;
       }
 
+  closeGaps(image, size);
+
   count -= eqv.size();
   return count;
 }
@@ -166,8 +187,7 @@ int parallelMarking(int* image, int x, int y)
     std::vector<Equivalence> eqv;
     for (int i = portion; i < y; i += portion)
       for (int j = 0; j < x; j++)
-        if (image[i * x + j] && image[(i - 1) * x + j] &&
-            image[i * x + j] != image[(i - 1) * x + j])
+        if (image[i * x + j] && image[(i - 1) * x + j])
           addToTable(eqv, image[i * x + j], image[(i - 1) * x + j]);
 
     int size = x * y;
@@ -177,6 +197,8 @@ int parallelMarking(int* image, int x, int y)
           image[i] = eqv[j].to;
           break;
         }
+
+    closeGaps(image, size);
     count -= eqv.size();
   }
   
